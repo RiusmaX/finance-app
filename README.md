@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Finance AI App
 
-## Getting Started
+Une application moderne de gestion des finances personnelles avec intégration IA, construite avec Next.js 16.
 
-First, run the development server:
+## Prérequis
+
+*   **Node.js** v20 ou supérieur
+*   **Docker** & **Docker Compose** (pour la base de données)
+*   Une clé API **Google Gemini** (optionnelle pour le dev, requise pour les fonctionnalités IA)
+
+## Installation et Démarrage Rapide
+
+Suivez ces étapes pour lancer le projet localement.
+
+### 1. Installation des dépendances
+
+```bash
+npm install
+```
+
+### 2. Configuration de l'environnement
+
+Créez un fichier `.env` à la racine du projet (ou copiez un exemple s'il existe).
+
+```bash
+# .env
+DATABASE_URL="postgres://postgres:password@localhost:5432/finance_app"
+BETTER_AUTH_SECRET="votre_secret_genere_aleatoirement"
+BETTER_AUTH_URL="http://localhost:3000" # Important pour l'auth
+GEMINI_API_KEY="votre_cle_api_google_gemini"
+```
+
+> **Note:** Vous pouvez générer un secret pour `BETTER_AUTH_SECRET` avec `openssl rand -base64 32`.
+
+### 3. Démarrage de la Base de Données
+
+Nous utilisons Docker pour héberger PostgreSQL.
+
+```bash
+# Lance le conteneur DB en arrière-plan
+docker compose up -d
+```
+
+Vérifiez que le conteneur tourne avec `docker ps`.
+
+### 4. Initialisation de la Base de Données (Migrations)
+
+Appliquez le schéma de la base de données via Drizzle Kit.
+
+```bash
+npx drizzle-kit push
+```
+
+Cette commande synchronise votre schéma TypeScript (`src/db/schema`) avec la base de données PostgreSQL.
+
+### 5. Peupler la Base de Données (Seed)
+
+Pour avoir des données de test (Utilisateur démo, comptes, transactions), lancez :
+
+```bash
+npm run seed
+```
+
+Cela créera :
+*   Un utilisateur : `Demo User` (`demo@example.com`)
+*   Deux comptes bancaires (Courant, Livret A)
+*   Des catégories par défaut
+*   Quelques transactions
+
+### 6. Lancer l'application
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Ouvrez [http://localhost:3000](http://localhost:3000) dans votre navigateur.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Utilisation
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Dashboard :** Vue d'ensemble des comptes (Données mockées pour l'instant dans le composant Dashboard, mais les données réelles sont en DB).
+2.  **Transactions :** Voir la liste des transactions.
+3.  **Import :**
+    *   Allez dans l'onglet Import.
+    *   Upload un fichier CSV, XLS ou QIF.
+    *   L'IA analysera les transactions (si la clé API est configurée).
 
-## Learn More
+## Commandes Utiles
 
-To learn more about Next.js, take a look at the following resources:
+*   `npm run lint` : Vérification du code (ESLint).
+*   `npx drizzle-kit studio` : Outil visuel pour explorer la base de données.
+*   `docker compose down` : Arrêter la base de données.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Documentation
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Voir [SPECIFICATIONS.md](./SPECIFICATIONS.md) pour les détails techniques et [AGENTS.md](./AGENTS.md) pour les conventions de développement.
